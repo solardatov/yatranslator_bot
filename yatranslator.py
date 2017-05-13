@@ -68,6 +68,12 @@ class TranslatorCore:
 
         self.start_time = time.time()
 
+    def help_str(self):
+        help_message = self.make_bold('Доступные команды:\n')
+        for command in LANG_MAP:
+            help_message += '/' + command + '\n'
+        return help_message
+
     def make_bold(self, text):
         return '*' + text + '*'
 
@@ -111,7 +117,10 @@ class TranslatorCore:
 
         if message[0] == '/':
             command = message[1:]
-            if command == 'stats':
+            if command == 'start':
+                self.send_message(update['message']['chat']['id'], update['message']['message_id'],
+                                  self.help_str())
+            elif command == 'stats':
                 if self.is_admin(update):
                     self.send_message(update['message']['chat']['id'], update['message']['message_id'],
                                       'total=' + str(self.total_request_count) + ' users='+str(self.users))
@@ -120,6 +129,7 @@ class TranslatorCore:
                     self.send_message(update['message']['chat']['id'], update['message']['message_id'],
                                       'uptime=' + str((time.time() - self.start_time)/(60*60)) + ' hours')
             else:
+                self.update_stats(update)
                 self.send_message(update['message']['chat']['id'], update['message']['message_id'],
                                   ('Язык изменен: ' if self.set_language(
                                       command) else 'Данный язык не поддерживается, установлен: ') + self.make_italic(
@@ -147,7 +157,6 @@ class TranslatorCore:
                 for update in updates_list:
                     LOG.info(update)
                     self.tele_last_update_id = update['update_id']
-                    self.update_stats(update)
                     self.do_response_for(update)
 
 
