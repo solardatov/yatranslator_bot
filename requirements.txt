@@ -1,0 +1,2 @@
+alphabet-detector==0.0.5
+requests==2.13.0
