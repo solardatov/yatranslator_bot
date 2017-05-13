@@ -133,12 +133,12 @@ class TranslatorCore:
                     self.send_message(update['message']['chat']['id'], update['message']['message_id'],
                                       'uptime=' + str((time.time() - self.start_time)/(60*60)) + ' hours')
             else:
-                self.update_stats(update)
                 self.send_message(update['message']['chat']['id'], update['message']['message_id'],
                                   ('Язык изменен: ' if self.set_language(
                                       command) else 'Данный язык не поддерживается, установлен: ') + self.make_italic(
                                       self.language))
         else:
+            self.update_stats(update)
             self.send_message(update['message']['chat']['id'], update['message']['message_id'],
                 self.make_bold(self.do_translate(message)) + self.make_italic(' (' + self.language + ')'))
 
@@ -150,10 +150,16 @@ class TranslatorCore:
 
     def update_stats(self, update):
         self.total_request_count += 1
+        username = 'John Doe'
         try:
-            self.users.add(update['message']['from']['username'])
+            username = update['message']['from']['username']
         except KeyError:
-            LOG.info('KeyError in update update_stats')
+            try:
+                username = update['message']['from']['first_name'] + ' ' + update['message']['from']['last_name'] + ' ' + str(update['message']['from']['id'])
+            except KeyError:
+                LOG.error('Cant extract username')
+
+        self.users.add(username)
 
     def run(self):
         try:
