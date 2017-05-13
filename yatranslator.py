@@ -150,18 +150,26 @@ class TranslatorCore:
 
     def update_stats(self, update):
         self.total_request_count += 1
-        self.users.add(update['message']['from']['username'])
+        try:
+            self.users.add(update['message']['from']['username'])
+        except KeyError:
+            LOG.info('KeyError in update update_stats')
 
     def run(self):
-        updates = self.get_updates(self.tele_last_update_id + 1)
+        try:
+            updates = self.get_updates(self.tele_last_update_id + 1)
 
-        if len(updates):
-            if updates['ok']:
-                updates_list = updates['result']
-                for update in updates_list:
-                    LOG.info(update)
-                    self.tele_last_update_id = update['update_id']
-                    self.do_response_for(update)
+            if len(updates):
+                if updates['ok']:
+                    updates_list = updates['result']
+                    for update in updates_list:
+                        LOG.info(update)
+                        self.tele_last_update_id = update['update_id']
+                        self.do_response_for(update)
+        except KeyError:
+            LOG.info("Caught KeyError in run method")
+        except:
+            LOG.info("Caught something bad in run method")
 
 
 def main():
