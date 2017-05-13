@@ -1,5 +1,5 @@
 # yatranslator_bot
-Telegram bot using Yandex translation API. Available as [@yatranslator_bot](https://t.me/yatranslator_bot).
+Telegram bot using Yandex translation API. Coded just for fun. Available as [@yatranslator_bot](https://t.me/yatranslator_bot).
 
 Please use following commands to set language
 ```
