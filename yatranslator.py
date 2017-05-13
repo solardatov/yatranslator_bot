@@ -66,12 +66,16 @@ class TranslatorCore:
         self.total_request_count = 0
         self.users = set()
 
+        self.start_time = time.time()
+
     def make_bold(self, text):
         return '*' + text + '*'
 
     def make_italic(self, text):
         return '_' + text + '_'
 
+    def is_admin(self, update):
+        return update['message']['from']['username'] == self.admin_username
 
     def set_language(self, language):
         if language in LANG_MAP:
@@ -107,11 +111,14 @@ class TranslatorCore:
 
         if message[0] == '/':
             command = message[1:]
-
             if command == 'stats':
-                if update['message']['from']['username'] == self.admin_username:
+                if self.is_admin(update):
                     self.send_message(update['message']['chat']['id'], update['message']['message_id'],
                                       'total=' + str(self.total_request_count) + ' users='+str(self.users))
+            elif command == 'uptime':
+                if self.is_admin(update):
+                    self.send_message(update['message']['chat']['id'], update['message']['message_id'],
+                                      'uptime=' + str((time.time() - self.start_time)/(60*60)) + ' hours')
             else:
                 self.send_message(update['message']['chat']['id'], update['message']['message_id'],
                                   ('Язык изменен: ' if self.set_language(
