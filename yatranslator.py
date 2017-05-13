@@ -113,7 +113,11 @@ class TranslatorCore:
         return requests.get(url).json()
 
     def do_response_for(self, update):
-        message = update['message']['text']
+        try:
+            message = update['message']['text']
+        except KeyError:
+            #ignore callback queries
+            return
 
         if message[0] == '/':
             command = message[1:]
