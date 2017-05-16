@@ -201,7 +201,7 @@ def main():
     bot = TranslatorCore(AlphabetDetector(), os.environ['TELE_TOKEN'], os.environ['YA_API_KEY'], os.environ['ADMIN_USERNAME'])
     while True:
         bot.run()
-        time.sleep(0.1)
+        time.sleep(1)
 
 
 if __name__ == '__main__':
